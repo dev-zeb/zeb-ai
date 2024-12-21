@@ -21,8 +21,12 @@ export async function POST(req: Request) {
         "Content-Type": "audio/mpeg",
       },
     })
-  } catch (error) {
-    return Response.json({ error: "Failed to generate audio" }, { status: 500 })
+  } catch (error: unknown) {
+    let errorMessage = 'An unexpected error occurred while generating the audio.'
+    if (error instanceof Error && error.message === 'API key not found') {
+      errorMessage = 'API configuration error. Please check the server setup.'
+    }
+    return Response.json({ error: errorMessage }, { status: 500 })
   }
 }
 

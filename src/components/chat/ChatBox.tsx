@@ -2,11 +2,11 @@
 
 import { Sender, useChatStorage } from "@/app/hooks/use-chat-storage";
 import { Container } from "@/components/container";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Button } from "../button";
 import { Textarea } from "../textarea";
 import ChatMessage from "./ChatMessage";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { BookOpen, TrashIcon } from "lucide-react";
 import Loader from "../loader";
 
@@ -33,7 +33,8 @@ export default function ChatBox() {
       const { reply } = await response.json();
       const aiMessage = { text: reply, sender: Sender.AI, id: Date.now().toString() };
       saveMessage([userMessage, aiMessage]);
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error("Error sending message:", error);
       toast.error("Something went wrong. Please try again.");
     } finally {
       setIsTyping(false);

@@ -1,4 +1,3 @@
-import { openai } from "@ai-sdk/openai"
 
 export async function POST(req: Request) {
   const { prompt } = await req.json()
@@ -20,8 +19,12 @@ export async function POST(req: Request) {
 
     const data = await response.json()
     return Response.json({ url: data.data[0].url })
-  } catch (error) {
-    return Response.json({ error: "Failed to generate image" }, { status: 500 })
+  } catch (error: unknown) {
+    let errorMessage = 'An unexpected error occurred while generating the image.'
+    if (error instanceof Error && error.message === 'API key not found') {
+      errorMessage = 'API configuration error. Please check the server setup.'
+    }
+    return Response.json({ error: errorMessage }, { status: 500 })
   }
 }
 

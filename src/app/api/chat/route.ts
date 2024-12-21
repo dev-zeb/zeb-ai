@@ -27,14 +27,12 @@ export async function POST(request: Request) {
 
     // Return the generated content
     return NextResponse.json({ reply: responseText });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error generating content:', error);
-
-    // Customize error responses for better client-side handling
-    const errorMessage =
-      error.message === 'API key not found'
-        ? 'API configuration error. Please check the server setup.'
-        : error.response?.data?.message || 'An unexpected error occurred while generating the response.';
+    let errorMessage = 'An unexpected error occurred while generating the response.';
+    if(error instanceof Error && error.message === 'API key not found') {
+      errorMessage = 'API configuration error. Please check the server setup.';
+    }
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
